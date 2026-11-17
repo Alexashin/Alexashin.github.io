@@ -1,0 +1,18 @@
+---
+import { profile } from '../data/profile';
+---
+<footer class="wrap">
+  <p class="big" aria-hidden="true">{profile.name}</p>
+  <div class="row small muted">
+    <span>© {new Date().getFullYear()} {profile.name}</span>
+    <a href={profile.github}>GitHub</a>
+    <a href="/privacy/">Политика конфиденциальности</a>
+  </div>
+</footer>
+<style>
+  footer { padding-block: var(--section) 28px; }
+  .big { font-size: calc((100vw - 2 * var(--m)) * 0.122); font-weight: 600; letter-spacing: -0.05em; line-height: 0.88; white-space: nowrap; margin-left: -0.04em; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-top: 36px; }
+  .row a { text-decoration: none; }
+  .row a:hover { color: var(--ink); text-decoration: underline; }
+</style>

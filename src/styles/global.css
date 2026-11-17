@@ -1,0 +1,77 @@
+@import '@fontsource-variable/onest';
+
+:root {
+  /* Палитра: ночь и васильковый */
+  --bg: #0a0d14;
+  --surface: #131824;
+  --surface-2: #1b2233;
+  --ink: #e9edf3;
+  --muted: #a9b2c1;
+  --accent: #5a9bfc;
+  --accent-ink: #0a0d14;
+  /* полоски на кадрах: четыре значения по кругу */
+  --s1: #5a9bfc; --s1-ink: #0a0d14;
+  --s2: #e9edf3; --s2-ink: #0a0d14;
+  --s3: #27406e; --s3-ink: #e9edf3;
+  --s4: #a9b2c1; --s4-ink: #0a0d14;
+
+  /* Шрифт */
+  --font: 'Onest Variable', system-ui, sans-serif;
+  /* Пять размеров */
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-title: clamp(1.75rem, 1.2rem + 1.9vw, 2.75rem);
+  --step-display: clamp(2.25rem, 1rem + 5vw, 5rem);
+
+  /* Рамка: одна пара полей и 12 колонок */
+  --m: clamp(16px, 2.2vw, 32px);
+  --gap: 12px;
+  --section: clamp(96px, 12vw, 200px);
+  --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--step-body)/1.55 var(--font);
+  font-optical-sizing: auto; text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.wrap { padding-inline: var(--m); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+.small { font-size: var(--step-small); }
+.muted { color: var(--muted); }
+.tnum { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+h1, h2 { font-weight: 600; letter-spacing: -0.035em; line-height: 0.98; font-size: var(--step-title); text-wrap: balance; }
+.section { padding-block: var(--section) 0; }
+
+/* Кнопка: плоская, квадратная, одна на всю страницу */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 22px; background: var(--accent); color: var(--accent-ink);
+  font-weight: 600; text-decoration: none; transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.btn:hover { background: var(--ink); }
+.btn:active { transform: translateY(1px); }
+
+/* Появление по скроллу: только когда скрипт жив */
+.js [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); transition-delay: calc(var(--d, 0) * 80ms); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; }
+}

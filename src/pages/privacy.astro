@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteBar from '../components/SiteBar.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/profile';
+---
+<Base title="Политика конфиденциальности" path="/privacy/">
+  <SiteBar />
+  <main class="wrap">
+    <div class="g">
+    <h1>Политика конфиденциальности</h1>
+    <div class="t">
+      <p>Оператор: {profile.name}, {profile.city}. Контакты: <a href={`mailto:${profile.email}`}>{profile.email}</a>.</p>
+      <h2>Какие данные собирает сайт</h2>
+      <p>Сайт не содержит форм и не просит оставлять персональные данные. Связаться со мной можно через Telegram, почту или телефон, это ваше самостоятельное обращение, данные из него я использую только для ответа.</p>
+      <h2>Файлы cookie и аналитика</h2>
+      <p>Сайт не устанавливает собственных cookie. Если на сайте подключается сервис статистики посещений (Яндекс Метрика), он собирает обезличенные данные о посещении: страницы, источник перехода, тип устройства. Это описание будет дополнено при подключении счётчика.</p>
+      <h2>Хранение и удаление</h2>
+      <p>Переписку я храню только пока идёт работа над задачей и разумное время после неё. Попросить удалить переписку можно по любому из контактов выше.</p>
+      <p class="muted small">Редакция от 18.11.2026.</p>
+    </div>
+    </div>
+  </main>
+  <Footer />
+</Base>
+<style>
+  main { padding-top: clamp(32px, 6vw, 80px); }
+  .g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 40px; }
+  h1 { grid-column: 1 / span 5; font-size: var(--step-title); }
+  .t { grid-column: 6 / -1; margin-top: 0; max-width: 62ch; display: flex; flex-direction: column; gap: 1em; }
+  .t :global(h2) { font-size: var(--step-lead); letter-spacing: -0.02em; margin-top: 1em; }
+  .t a { color: var(--accent); }
+  @media (max-width: 900px) { h1, .t { grid-column: 1 / -1; } }
+</style>

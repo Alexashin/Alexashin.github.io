@@ -1,0 +1,27 @@
+<dialog id="lb" aria-label="Просмотр кадра">
+  <button type="button" class="x" aria-label="Закрыть">Закрыть</button>
+  <img alt="" />
+  <p class="cap small"></p>
+</dialog>
+<style>
+  dialog { border: 0; padding: 0; background: transparent; color: var(--ink); max-width: none; max-height: none; width: 100vw; height: 100dvh; }
+  dialog:not([open]) { display: none; }
+  dialog[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: 12px; padding: 16px var(--m); background: color-mix(in srgb, var(--bg) 94%, transparent); animation: lbin 0.35s var(--ease) both; }
+  dialog img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; min-height: 0; }
+  .x { justify-self: end; background: var(--ink); color: var(--bg); min-height: 40px; padding: 0 16px; font-weight: 600; }
+  .x:hover { background: var(--accent); }
+  .cap { color: var(--muted); text-align: center; }
+  @keyframes lbin { from { opacity: 0; } to { opacity: 1; } }
+</style>
+<script>
+  const dlg = document.getElementById('lb') as HTMLDialogElement | null;
+  if (dlg) {
+    const img = dlg.querySelector('img')!;
+    const cap = dlg.querySelector('.cap')!;
+    document.querySelectorAll<HTMLButtonElement>('button[data-full]').forEach((b) => b.addEventListener('click', () => {
+      img.src = b.dataset.full ?? ''; img.alt = b.dataset.alt ?? ''; cap.textContent = b.dataset.alt ?? '';
+      dlg.showModal();
+    }));
+    dlg.addEventListener('click', (e) => { if (e.target !== img) dlg.close(); });
+  }
+</script>

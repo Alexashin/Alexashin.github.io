@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteBar from '../components/SiteBar.astro';
+---
+<Base title="Страница не найдена" path="/404">
+  <SiteBar />
+  <main class="wrap">
+    <h1>Такой страницы нет</h1>
+    <p class="lead"><a href="/">Вернуться на главную</a> или <a href="/projects/">посмотреть все проекты</a>.</p>
+  </main>
+</Base>
+<style>
+  main { min-height: 70svh; padding-top: clamp(40px, 8vw, 120px); }
+  .lead { margin-top: 24px; font-size: var(--step-lead); }
+  .lead a { color: var(--accent); }
+</style>

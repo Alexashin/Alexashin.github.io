@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/profile';
+
+interface Props { title?: string; description?: string; path?: string; }
+const { title, description = `${profile.name}: ${profile.tagline.toLowerCase()}. Реальные проекты, стек и контакты.`, path = '/' } = Astro.props;
+const fullTitle = title ? `${title} · ${profile.name}` : `${profile.name}, разработчик ботов, веб-панелей и автоматизации`;
+const url = new URL(path, Astro.site).href;
+const og = new URL('/og.png', Astro.site).href;
+const ym = import.meta.env.PUBLIC_YM_ID;
+const person = {
+  '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: 'Разработчик',
+  url: Astro.site?.href, sameAs: [profile.github, profile.telegram.url], email: profile.email,
+  address: { '@type': 'PostalAddress', addressLocality: profile.city, addressCountry: 'RU' },
+};
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0d14" />
+    <link rel="canonical" href={url} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    {ym && <script is:inline define:vars={{ ym }}>
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(ym,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+    </script>}
+  </head>
+  <body>
+    <slot />
+    <script>
+      // Появление блоков по скроллу
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        els.forEach((el) => io.observe(el));
+      } else els.forEach((el) => el.classList.add('in'));
+    </script>
+  </body>
+</html>

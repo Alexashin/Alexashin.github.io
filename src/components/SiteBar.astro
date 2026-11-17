@@ -1,0 +1,19 @@
+---
+import { profile } from '../data/profile';
+---
+<header class="bar wrap">
+  <a class="mark" href="/" aria-label="На главную">{profile.name}</a>
+  <nav aria-label="Основная">
+    <a href="/projects/">Проекты</a>
+    <a href="/#about">Обо мне</a>
+    <a class="btn" href={profile.telegram.url}>Написать</a>
+  </nav>
+</header>
+<style>
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; background: var(--bg); position: relative; z-index: 3; }
+  .mark { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
+  nav { display: flex; align-items: center; gap: clamp(16px, 3vw, 36px); font-size: var(--step-small); }
+  nav a:not(.btn) { text-decoration: none; }
+  nav a:not(.btn):hover { text-decoration: underline; }
+  .btn { min-height: 40px; padding: 0 16px; }
+</style>

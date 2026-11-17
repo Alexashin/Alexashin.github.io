@@ -1,0 +1,35 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+interface Props { project: CollectionEntry<'projects'>; height?: number; fit?: number; }
+const { project, height: baseH = 200, fit = 1340 } = Astro.props;
+// Если все кадры помещаются в один ряд, растягиваем их по ширине (но не больше 560px высотой)
+const sumR = project.data.gallery.reduce((s, g) => s + g.src.width / g.src.height, 0);
+const n = project.data.gallery.length;
+const natural = baseH * sumR + 8 * (n - 1);
+const height = n > 1 && natural < fit ? Math.round(Math.min(560, (fit - 8 * (n - 1)) / sumR)) : baseH;
+const frames = await Promise.all(project.data.gallery.map(async (g) => {
+  const big = await getImage({ src: g.src, width: 1800, format: 'webp' });
+  return { ...g, full: big.src };
+}));
+---
+<ul class="run" style={`--h:${height}px`}>
+  {frames.map((g, i) => (
+    <li data-reveal style={`--r:${g.src.width / g.src.height};--d:${i % 5}`}>
+      <button type="button" data-full={g.full} data-alt={g.alt} aria-label={`Открыть: ${g.alt}`}>
+        <Image src={g.src} alt={g.alt} height={height * 2} widths={[320, 640]} sizes={`${Math.round(height * g.src.width / g.src.height)}px`} loading="lazy" />
+      </button>
+    </li>
+  ))}
+</ul>
+<style>
+  .run { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .run li { flex: var(--r) 1 calc(var(--h) * var(--r)); aspect-ratio: var(--r); min-width: 0; }
+  .run::after { content: ''; flex-grow: 100000; }
+  .run button { display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; }
+  .run :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+  .run button:hover :global(img) { transform: scale(1.04); }
+  @media (max-width: 700px) {
+    .run li { flex-basis: calc(var(--h) * var(--r) * 0.62); }
+  }
+</style>

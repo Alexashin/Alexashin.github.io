@@ -1,0 +1,41 @@
+---
+import { Image } from 'astro:assets';
+import me from '../assets/me.jpg';
+import { profile } from '../data/profile';
+---
+<section id="contact" class="section wrap" aria-label="Контакты">
+  <div class="grid">
+    <p class="sentence" data-reveal>Расскажите задачу: скажу, возьмусь ли, за какую цену и в какой срок.</p>
+    <div class="portrait" data-reveal style="--d:1">
+      <Image src={me} alt={`Портрет: ${profile.name}`} width={340} height={340} widths={[170, 340]} sizes="170px" />
+    </div>
+    <div class="links" data-reveal style="--d:2">
+      <p class="q">Как связаться?</p>
+      <ul>
+        <li><a href={profile.telegram.url}>Telegram {profile.telegram.handle}</a></li>
+        <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+        <li><a href={`tel:${profile.phone.tel}`}>{profile.phone.display}</a>, звонок и MAX</li>
+      </ul>
+    </div>
+    <p class="note small muted" data-reveal>{profile.city}, работаю удалённо по России. {profile.replyTime}</p>
+  </div>
+</section>
+
+<style>
+  .sentence { grid-column: 1 / span 5; font-size: clamp(1.625rem, 3vw, 2.25rem); line-height: 1.12; letter-spacing: -0.025em; font-weight: 500; }
+  .portrait { grid-column: 8 / span 2; align-self: start; }
+  .portrait :global(img) { width: 170px; height: 170px; object-fit: cover; filter: grayscale(1) contrast(1.1); background: var(--accent); mix-blend-mode: luminosity; }
+  .links { grid-column: 10 / span 3; align-self: start; }
+  .q { font-weight: 500; margin-bottom: 20px; }
+  .links ul { display: flex; flex-direction: column; gap: 10px; }
+  .links a { text-underline-offset: 0.25em; text-decoration-thickness: 1px; overflow-wrap: anywhere; }
+  .links a:hover { color: var(--accent); }
+  .note { grid-column: 1 / -1; margin-top: clamp(48px, 6vw, 88px); }
+  @media (max-width: 900px) {
+    .sentence { grid-column: 1 / -1; font-size: 1.5rem; }
+    .portrait { grid-column: 1 / span 3; margin-top: 36px; }
+    .portrait :global(img) { width: 96px; height: 96px; }
+    .links { grid-column: 4 / -1; margin-top: 36px; }
+  }
+  @media (min-width: 901px) and (max-width: 1100px) { .links { grid-column: 9 / -1; } .portrait { grid-column: 7 / span 2; } }
+</style>

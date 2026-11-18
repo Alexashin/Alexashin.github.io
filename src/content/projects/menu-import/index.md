@@ -14,6 +14,9 @@ metrics:
 cover: "./01-viewer.png"
 gallery:
   - { src: "./01-viewer.png", alt: "Просмотрщик номенклатуры и составов", frame: desktop }
+  - { src: "./02-run-start.png", alt: "Запуск скрипта: 21 файл техкарт найден, индекс кодов", frame: desktop }
+  - { src: "./03-run-files.png", alt: "Разбор по файлам: колонки определяются по заголовкам", frame: desktop }
+  - { src: "./04-report.png", alt: "Отчёт: статистика и автоисправления с точным местом ошибки", frame: desktop }
 ---
 
 ## Бизнес-задача

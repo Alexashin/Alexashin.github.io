@@ -35,7 +35,8 @@ const frames = await Promise.all(project.data.gallery.map(async (g) => {
   .run::after { content: ''; flex-grow: 100000; }
   .run button { position: relative; display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; cursor: zoom-in; }
   .run :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
-  .run video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .run video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .run video.on { opacity: 1; }
   .run .play { position: absolute; left: 8px; bottom: 8px; padding: 2px 8px; font-size: 0.75rem; font-weight: 600; background: var(--accent); color: var(--accent-ink); }
   .run button:hover :global(img) { transform: scale(1.03); }
   @media (max-width: 700px) {
@@ -50,6 +51,6 @@ const frames = await Promise.all(project.data.gallery.map(async (g) => {
       const v = e.target as HTMLVideoElement;
       if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
     }), { threshold: 0.4 });
-    vids.forEach((v) => io.observe(v));
+    vids.forEach((v) => { v.addEventListener('playing', () => v.classList.add('on')); io.observe(v); });
   }
 </script>

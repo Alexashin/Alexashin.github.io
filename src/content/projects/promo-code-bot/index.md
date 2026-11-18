@@ -16,7 +16,7 @@ gallery:
   - { src: "./video-admin.png", alt: "Администратор смотрит статистику и обновляет коды: ролик", frame: mobile, video: "/media/promo-code-bot/admin.mp4" }
   - { src: "./01-bot-promo-code.png", alt: "Выдача промокода гостю", frame: chat }
   - { src: "./02-bot-stats.png", alt: "Статистика для администратора", frame: chat }
-  - { src: "./03-guest-flow.png", alt: "Выбор направления и выдача кода", frame: mobile }
+  - { src: "./03-guest-flow.png", alt: "Повторная попытка: один человек, один код", frame: mobile }
   - { src: "./04-admin-reload.png", alt: "Обновление кодов из таблицы", frame: mobile }
 ---
 

@@ -20,7 +20,9 @@
   .count { color: var(--muted); }
   .stage { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 0; }
   .stage img { justify-self: center; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; min-height: 0; touch-action: pan-y; user-select: none; transition: opacity 0.2s; }
-  .stage video { justify-self: center; max-width: 100%; max-height: 100%; min-height: 0; background: #000; }
+  /* global.css задаёт img { display: block }, из-за этого hidden не срабатывал: прошлый кадр оставался в центре, а видео уезжало вправо */
+  .stage img[hidden], .stage video[hidden] { display: none; }
+  .stage video { justify-self: center; align-self: stretch; height: 100%; width: auto; max-width: 100%; aspect-ratio: var(--ar, 9 / 16); object-fit: contain; min-height: 0; background: #000; }
   .stage img.loading { opacity: 0.35; }
   .x, .nav { background: var(--surface-2); color: var(--ink); min-height: 44px; font-weight: 600; transition: background 0.2s, color 0.2s; }
   .x { padding: 0 16px; }
@@ -58,6 +60,7 @@
       vid.pause();
       if (b.dataset.video) {
         img.hidden = true; vid.hidden = false;
+        vid.style.setProperty('--ar', b.parentElement?.style.getPropertyValue('--r') || '0.5');
         vid.poster = b.dataset.full ?? ''; vid.src = b.dataset.video; vid.loop = true; vid.muted = true;
         vid.play().catch(() => {});
       } else {

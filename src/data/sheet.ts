@@ -3,6 +3,9 @@ import type { ImageMetadata } from 'astro';
 
 const KIND: Record<string, string> = { bot: 'Бот', web: 'Веб', data: 'Данные', iot: 'IoT', audio: 'Аудио' };
 
+/** В стену на главной идут только «зрелищные» проекты и только окна/экраны приложений, без чат-скринов. */
+const HERO_PROJECTS = new Set(['tickets-and-entry', 'samplit', 'laser-tag-iot']);
+
 export interface SheetFrame { img: ImageMetadata; alt: string; slug: string; label: string; strip: number; i: number; }
 
 /**
@@ -11,9 +14,18 @@ export interface SheetFrame { img: ImageMetadata; alt: string; slug: string; lab
  * в самую короткую колонку, чтобы колонки заполнялись ровно.
  */
 export function buildSheet(projects: CollectionEntry<'projects'>[], cols = 6, colWidth = 222, target = 1500): SheetFrame[][] {
-  const queues = projects.map((p) => p.data.gallery.map((g) => ({ g, p })));
+  const queues = projects
+    .filter((p) => HERO_PROJECTS.has(p.id))
+    .map((p) => p.data.gallery.filter((g) => g.frame !== 'chat' && !g.video).map((g) => ({ g, p })));
   const mixed: { g: (typeof queues)[0][0]['g']; p: CollectionEntry<'projects'> }[] = [];
   for (let k = 0; queues.some((q) => q[k]); k++) for (const q of queues) if (q[k]) mixed.push(q[k]);
+
+  // Кадров мало, а колонки должны быть заполнены: добираем по кругу со сдвигом, чтобы соседи менялись
+  const base = [...mixed];
+  for (let pass = 1; pass < 4 && base.length; pass++) {
+    const shift = (pass * 7) % base.length;
+    mixed.push(...base.slice(shift), ...base.slice(0, shift));
+  }
 
   const columns: SheetFrame[][] = Array.from({ length: cols }, () => []);
   const heights = new Array(cols).fill(0);

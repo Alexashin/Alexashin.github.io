@@ -52,7 +52,7 @@ const isShort = (p: CollectionEntry<'projects'>) =>
   .filters button[aria-pressed='true'] { color: var(--ink); font-weight: 600; }
   .filters button[aria-pressed='true']::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--accent); margin-right: 8px; vertical-align: 0.1em; }
   .all { font-size: var(--step-small); color: var(--ink); text-underline-offset: 0.3em; }
-  .all:hover { color: var(--accent); }
+  .all:hover { color: var(--accent-text); }
 
   .strips { display: flex; flex-direction: column; gap: clamp(48px, 5vw, 72px); min-width: 0; }
   .strips li[hidden] { display: none; }
@@ -65,7 +65,7 @@ const isShort = (p: CollectionEntry<'projects'>) =>
 
   .cap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto; gap: 8px 32px; align-items: baseline; padding: 18px var(--m) 0 0; }
   .name { font-size: var(--step-lead); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; transition: color 0.2s; }
-  .item:hover .name, .item:focus-visible .name { color: var(--accent); }
+  .item:hover .name, .item:focus-visible .name { color: var(--accent-text); }
   .sum { color: var(--ink); font-size: var(--step-body); line-height: 1.45; max-width: 52ch; }
   .meta { color: var(--muted); font-size: var(--step-small); white-space: nowrap; }
 

@@ -13,7 +13,7 @@ const links = [
 ---
 <header class="bar">
   <div class="in wrap">
-    <a class="mark" href="/" aria-label="На главную">{profile.name}</a>
+    <a class="mark" href="/" aria-label="На главную"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" /><path d="M8 4h16v4h-16ZM24 8h4v4h-4ZM8 12h20v4h-20ZM4 16h4v4h-4ZM24 16h4v4h-4ZM4 20h4v4h-4ZM24 20h4v4h-4ZM8 24h20v4h-20Z" /></svg><span>{profile.name}</span></a>
     <nav aria-label="Разделы">
       {links.map((l) => (
         <a href={`/#${l.id}`} data-spy={l.id} aria-current={current === l.id ? 'true' : undefined}>{l.label}</a>
@@ -26,7 +26,10 @@ const links = [
 <style>
   .bar { position: sticky; top: 0; z-index: 20; background: var(--bg); }
   .in { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); min-height: var(--bar); }
-  .mark { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; white-space: nowrap; }
+  .mark { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; white-space: nowrap; }
+  .logo { width: 28px; height: 28px; flex: none; }
+  .logo rect { fill: var(--accent); }
+  .logo path { fill: var(--accent-ink); }
   nav { display: flex; gap: clamp(16px, 2.4vw, 32px); margin-left: auto; font-size: var(--step-small); }
   nav a { color: var(--muted); text-decoration: none; padding-block: 6px; white-space: nowrap; transition: color 0.2s; }
   nav a:hover { color: var(--ink); }

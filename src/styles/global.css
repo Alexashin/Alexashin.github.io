@@ -1,24 +1,25 @@
 @import '@fontsource-variable/onest';
 
 :root {
-  /* Палитра: ночь и васильковый */
-  --bg: #0a0d14;
-  --surface: #131824;
-  --surface-2: #1b2233;
-  --ink: #e9edf3;
-  --muted: #a9b2c1;
-  --accent: #5a9bfc;
-  --accent-ink: #0a0d14;
-  /* «Бумага»: светлые листы (прайс) на тёмном поле */
-  --paper: #e9edf3;
-  --paper-ink: #0a0d14;
+  /* Палитра «Кобальт»: основная, в цвет знака */
+  --bg: #090c16;
+  --surface: #121726;
+  --surface-2: #1a2136;
+  --ink: #eceff6;
+  --muted: #a9b2c4;
+  --accent: #2f62ff;       /* заливки: кнопки, выделение, знак */
+  --accent-ink: #ffffff;   /* текст на заливке акцента */
+  --accent-text: #6d92ff;  /* акцент цветом текста на тёмном (контраст 6.7) */
+  /* «Бумага»: светлые листы (прайс, карточка hero) на тёмном поле */
+  --paper: #f1f3f8;
+  --paper-ink: #090c16;
   --paper-muted: #48526a;
-  --paper-accent: #1f5fcc;
+  --paper-accent: #2452e0;
   /* полоски на кадрах: четыре значения по кругу */
-  --s1: #5a9bfc; --s1-ink: #0a0d14;
-  --s2: #e9edf3; --s2-ink: #0a0d14;
-  --s3: #27406e; --s3-ink: #e9edf3;
-  --s4: #a9b2c1; --s4-ink: #0a0d14;
+  --s1: #2f62ff; --s1-ink: #ffffff;
+  --s2: #eceff6; --s2-ink: #090c16;
+  --s3: #1b2c66; --s3-ink: #eceff6;
+  --s4: #a9b2c4; --s4-ink: #090c16;
 
   /* Шрифт */
   --font: 'Onest Variable', system-ui, sans-serif;
@@ -35,6 +36,16 @@
   --section: clamp(96px, 12vw, 200px);
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
   --bar: 64px; /* высота закреплённой шапки */
+}
+
+/* Запасная палитра «Классика»: прежние цвета сайта. Включается ?palette=classic */
+:root[data-palette='classic'] {
+  --bg: #0a0d14; --surface: #131824; --surface-2: #1b2233;
+  --ink: #e9edf3; --muted: #a9b2c1;
+  --accent: #5a9bfc; --accent-ink: #0a0d14; --accent-text: #5a9bfc;
+  --paper: #e9edf3; --paper-ink: #0a0d14; --paper-muted: #48526a; --paper-accent: #1f5fcc;
+  --s1: #5a9bfc; --s1-ink: #0a0d14; --s2: #e9edf3; --s2-ink: #0a0d14;
+  --s3: #27406e; --s3-ink: #e9edf3; --s4: #a9b2c1; --s4-ink: #0a0d14;
 }
 
 *, *::before, *::after { box-sizing: border-box; }

@@ -5,6 +5,8 @@ import { profile } from '../data/profile';
 
 interface Props { columns: SheetFrame[][]; }
 const { columns } = Astro.props;
+// Одна строчная «а» в фамилии выделена, как будто мышкой: отсылка к знаку
+const cut = profile.name.lastIndexOf('а');
 ---
 <section class="hero" aria-label="Начало">
   <div class="sheet" aria-hidden="true">
@@ -14,7 +16,7 @@ const { columns } = Astro.props;
           <li class="frame" style={`--i:${ci * 2 + fi}`}>
             <a href={`/projects/${f.slug}/`} tabindex="-1">
               <div class="pic">
-                <Image src={f.img} alt="" widths={[320, 480, 720]} sizes="(max-width: 700px) 50vw, 17vw" loading={fi < 2 ? 'eager' : 'lazy'} fetchpriority={fi === 0 ? 'high' : 'auto'} decoding="async" />
+                <Image src={f.img} alt="" widths={[320, 480, 720]} sizes="(max-width: 700px) 50vw, 17vw" loading="lazy" decoding="async" />
               </div>
               <span class={`strip s${f.strip + 1}`} data-label={f.label} aria-hidden="true"></span>
             </a>
@@ -26,7 +28,7 @@ const { columns } = Astro.props;
 
   <div class="overlay wrap">
     <div class="cell">
-      <h1>{profile.name}</h1>
+      <h1>{profile.name.slice(0, cut)}<span class="sel">{profile.name[cut]}</span>{profile.name.slice(cut + 1)}</h1>
       <p class="lead">{profile.lead}</p>
       <div class="acts">
         <a class="btn" href={profile.telegram.url}>Написать в Telegram</a>
@@ -62,6 +64,12 @@ const { columns } = Astro.props;
   .cell { grid-column: 3 / span 3; margin-top: 16svh; background: var(--ink); color: var(--bg); padding: clamp(24px, 2.4vw, 36px); pointer-events: auto; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; animation: cellin 0.7s var(--ease) 0.25s both; }
   @keyframes cellin { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
   h1 { font-size: var(--step-display); line-height: 0.94; }
+  /* Выделение «мышкой»: заливка протягивается слева направо после появления карточки */
+  .sel { position: relative; color: var(--accent-ink); animation: selink 0.01s linear 1.15s backwards; }
+  .sel::before { content: ''; position: absolute; inset: 0.04em -0.03em -0.06em; background: var(--accent); z-index: -1; transform-origin: left; animation: selbg 0.35s var(--ease) 0.9s backwards; }
+  h1 { position: relative; z-index: 0; }
+  @keyframes selbg { from { transform: scaleX(0); } }
+  @keyframes selink { from { color: inherit; } }
   .lead { font-size: var(--step-lead); line-height: 1.3; letter-spacing: -0.01em; max-width: 30ch; }
   .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 6px; }
   .cell .btn { background: var(--bg); color: var(--ink); }
@@ -75,8 +83,7 @@ const { columns } = Astro.props;
     .overlay { position: static; display: block; order: -1; padding-top: var(--gap); }
     .cell { margin: 0; min-height: 40svh; justify-content: flex-end; }
     .cell .btn { width: 100%; }
-    .sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); height: 85svh; padding-top: var(--gap); }
-    .col:nth-child(n + 3) { display: none; }
-    .c1 { margin-top: 0; } .c2 { margin-top: -60px; }
+    /* На телефоне стена плиток превращается в кашу: пропускаем, проекты ниже полосами */
+    .sheet { display: none; }
   }
 </style>

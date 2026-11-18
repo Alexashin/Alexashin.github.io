@@ -14,6 +14,11 @@ metrics:
   - { value: "16", label: "автотестов" }
 cover: "./01-bot-tour-wizard.png"
 gallery:
+  - { src: "./video-poster.png", alt: "Заявка на тур за один диалог: ролик", frame: mobile, video: "/media/travel-agency-bot/demo.mp4" }
+  - { src: "./02-direction.png", alt: "Шаг 2: выбор направления кнопками", frame: mobile }
+  - { src: "./03-children.png", alt: "Шаг 5: состав группы", frame: mobile }
+  - { src: "./04-dates.png", alt: "Шаг 7: даты поездки", frame: mobile }
+  - { src: "./05-request-sent.png", alt: "Заявка отправлена менеджеру", frame: mobile }
   - { src: "./01-bot-tour-wizard.png", alt: "Мастер подбора тура в Telegram", frame: chat }
 ---
 

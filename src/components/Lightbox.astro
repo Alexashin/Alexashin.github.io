@@ -6,6 +6,7 @@
   <div class="stage">
     <button type="button" class="nav prev" aria-label="Предыдущий кадр">←</button>
     <img alt="" />
+    <video controls playsinline hidden></video>
     <button type="button" class="nav next" aria-label="Следующий кадр">→</button>
   </div>
   <p class="cap small"></p>
@@ -19,6 +20,7 @@
   .count { color: var(--muted); }
   .stage { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 0; }
   .stage img { justify-self: center; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; min-height: 0; touch-action: pan-y; user-select: none; transition: opacity 0.2s; }
+  .stage video { justify-self: center; max-width: 100%; max-height: 100%; min-height: 0; background: #000; }
   .stage img.loading { opacity: 0.35; }
   .x, .nav { background: var(--surface-2); color: var(--ink); min-height: 44px; font-weight: 600; transition: background 0.2s, color 0.2s; }
   .x { padding: 0 16px; }
@@ -40,6 +42,7 @@
   const dlg = document.getElementById('lb') as HTMLDialogElement | null;
   if (dlg) {
     const img = dlg.querySelector('img')!;
+    const vid = dlg.querySelector('video')!;
     const cap = dlg.querySelector('.cap')!;
     const count = dlg.querySelector('.count')!;
     const prev = dlg.querySelector<HTMLButtonElement>('.prev')!;
@@ -52,10 +55,18 @@
     const show = (i: number) => {
       idx = (i + list.length) % list.length;
       const b = list[idx];
-      img.classList.add('loading');
-      img.onload = () => img.classList.remove('loading');
-      img.src = b.dataset.full ?? '';
-      img.alt = b.dataset.alt ?? '';
+      vid.pause();
+      if (b.dataset.video) {
+        img.hidden = true; vid.hidden = false;
+        vid.poster = b.dataset.full ?? ''; vid.src = b.dataset.video; vid.loop = true; vid.muted = true;
+        vid.play().catch(() => {});
+      } else {
+        vid.hidden = true; vid.removeAttribute('src'); vid.load(); img.hidden = false;
+        img.classList.add('loading');
+        img.onload = () => img.classList.remove('loading');
+        img.src = b.dataset.full ?? '';
+        img.alt = b.dataset.alt ?? '';
+      }
       cap.textContent = b.dataset.alt ?? '';
       count.textContent = `${title ? title + ' · ' : ''}${idx + 1} из ${list.length}`;
       prev.hidden = next.hidden = list.length < 2;
@@ -74,6 +85,7 @@
     prev.addEventListener('click', () => show(idx - 1));
     next.addEventListener('click', () => show(idx + 1));
     dlg.querySelector('.x')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('close', () => vid.pause());
     dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target === dlg.querySelector('.stage')) dlg.close(); });
     dlg.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); }

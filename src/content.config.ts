@@ -22,6 +22,8 @@ const projects = defineCollection({
           src: image(),
           alt: z.string(),
           frame: z.enum(['desktop', 'chat', 'mobile']),
+          video: z.string().optional(), // ролик в public/media: src служит постером
+          caption: z.string().optional(),
         }),
       ),
       draft: z.boolean().default(false),

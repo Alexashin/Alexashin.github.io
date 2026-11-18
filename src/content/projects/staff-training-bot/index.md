@@ -13,12 +13,19 @@ metrics:
   - { value: "3", label: "роли: администратор, сотрудник, стажёр" }
 cover: "./05-test-question.png"
 gallery:
+  - { src: "./video-admin.png", alt: "Администратор создаёт модуль с уроками и видео: ролик", frame: mobile, video: "/media/staff-training-bot/admin-create-module.mp4" }
+  - { src: "./video-lesson.png", alt: "Сотрудник проходит урок: ролик", frame: mobile, video: "/media/staff-training-bot/lesson.mp4" }
   - { src: "./01-admin-attestation.png", alt: "Результат аттестации для администратора", frame: chat }
   - { src: "./02-admin-users.png", alt: "Список пользователей", frame: chat }
   - { src: "./03-materials.png", alt: "Доступные материалы", frame: chat }
   - { src: "./04-employee-card.png", alt: "Карточка сотрудника и смена роли", frame: chat }
   - { src: "./05-test-question.png", alt: "Вопрос теста после урока", frame: chat }
   - { src: "./06-progress.png", alt: "Прогресс обучения сотрудника", frame: chat }
+  - { src: "./07-admin-menu.png", alt: "Меню администратора: управление обучением", frame: mobile }
+  - { src: "./08-module-created.png", alt: "Модуль создан", frame: mobile }
+  - { src: "./09-lesson-files.png", alt: "Урок: файлы, видео и переход к следующему", frame: mobile }
+  - { src: "./10-attestation-history.png", alt: "История попыток аттестации сотрудника", frame: mobile }
+  - { src: "./11-learner-modules.png", alt: "Сотрудник видит доступные модули и уроки", frame: mobile }
 ---
 
 ## Бизнес-задача

@@ -12,8 +12,12 @@ metrics:
   - { value: "3", label: "направления акции" }
 cover: "./02-bot-stats.png"
 gallery:
+  - { src: "./video-guest.png", alt: "Гость получает промокод: ролик", frame: mobile, video: "/media/promo-code-bot/guest.mp4" }
+  - { src: "./video-admin.png", alt: "Администратор смотрит статистику и обновляет коды: ролик", frame: mobile, video: "/media/promo-code-bot/admin.mp4" }
   - { src: "./01-bot-promo-code.png", alt: "Выдача промокода гостю", frame: chat }
   - { src: "./02-bot-stats.png", alt: "Статистика для администратора", frame: chat }
+  - { src: "./03-guest-flow.png", alt: "Выбор направления и выдача кода", frame: mobile }
+  - { src: "./04-admin-reload.png", alt: "Обновление кодов из таблицы", frame: mobile }
 ---
 
 ## Бизнес-задача

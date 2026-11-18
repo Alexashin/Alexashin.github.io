@@ -10,17 +10,20 @@ const natural = baseH * sumR + 8 * (n - 1);
 const height = n > 1 && natural < fit ? Math.round(Math.min(560, (fit - 8 * (n - 1)) / sumR)) : baseH;
 // Ряд нарезок: от 480px до родной ширины кадра, больше исходника не растягиваем
 const STEPS = [480, 800, 1200, 1600, 1920];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const frames = await Promise.all(project.data.gallery.map(async (g) => {
   const big = await getImage({ src: g.src, width: Math.min(g.src.width, 1920), format: 'webp', quality: 88 });
   const widths = [...STEPS.filter((w) => w < g.src.width), Math.min(g.src.width, 1920)];
-  return { ...g, full: big.src, widths };
+  return { ...g, full: big.src, widths, vsrc: g.video ? base + g.video : undefined };
 }));
 ---
 <ul class="run" style={`--h:${height}px`} data-gallery={project.data.title}>
   {frames.map((g, i) => (
     <li data-reveal style={`--r:${g.src.width / g.src.height};--nw:${g.src.width}px;--d:${i % 5}`}>
-      <button type="button" data-full={g.full} data-alt={g.alt} aria-label={`Открыть крупно: ${g.alt}`}>
+      <button type="button" data-full={g.full} data-alt={g.alt} data-video={g.vsrc} aria-label={`Открыть крупно: ${g.alt}`}>
         <Image src={g.src} alt={g.alt} widths={g.widths} sizes={`(max-width: 700px) 100vw, min(${g.src.width}px, 70vw)`} quality={88} loading="lazy" decoding="async" />
+        {g.vsrc && <video src={g.vsrc} muted loop playsinline preload="none" tabindex="-1" aria-hidden="true" data-loop></video>}
+        {g.vsrc && <span class="play" aria-hidden="true">Видео</span>}
       </button>
     </li>
   ))}
@@ -30,10 +33,23 @@ const frames = await Promise.all(project.data.gallery.map(async (g) => {
   /* Кадр растёт по ряду, но не шире родного размера: так скрин не мылится */
   .run li { flex: var(--r) 1 calc(var(--h) * var(--r)); aspect-ratio: var(--r); min-width: 0; max-width: var(--nw); }
   .run::after { content: ''; flex-grow: 100000; }
-  .run button { display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; cursor: zoom-in; }
+  .run button { position: relative; display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; cursor: zoom-in; }
   .run :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+  .run video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .run .play { position: absolute; left: 8px; bottom: 8px; padding: 2px 8px; font-size: 0.75rem; font-weight: 600; background: var(--accent); color: var(--accent-ink); }
   .run button:hover :global(img) { transform: scale(1.03); }
   @media (max-width: 700px) {
     .run li { flex-basis: calc(var(--h) * var(--r) * 0.62); }
   }
 </style>
+<script>
+  // Ролики-превью крутятся без звука только пока в кадре; при reduced-motion остаётся постер
+  const vids = document.querySelectorAll<HTMLVideoElement>('video[data-loop]');
+  if (vids.length && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+    }), { threshold: 0.4 });
+    vids.forEach((v) => io.observe(v));
+  }
+</script>

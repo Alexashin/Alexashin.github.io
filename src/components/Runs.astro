@@ -8,27 +8,31 @@ const sumR = project.data.gallery.reduce((s, g) => s + g.src.width / g.src.heigh
 const n = project.data.gallery.length;
 const natural = baseH * sumR + 8 * (n - 1);
 const height = n > 1 && natural < fit ? Math.round(Math.min(560, (fit - 8 * (n - 1)) / sumR)) : baseH;
+// Ряд нарезок: от 480px до родной ширины кадра, больше исходника не растягиваем
+const STEPS = [480, 800, 1200, 1600, 1920];
 const frames = await Promise.all(project.data.gallery.map(async (g) => {
-  const big = await getImage({ src: g.src, width: 1800, format: 'webp' });
-  return { ...g, full: big.src };
+  const big = await getImage({ src: g.src, width: Math.min(g.src.width, 1920), format: 'webp', quality: 88 });
+  const widths = [...STEPS.filter((w) => w < g.src.width), Math.min(g.src.width, 1920)];
+  return { ...g, full: big.src, widths };
 }));
 ---
-<ul class="run" style={`--h:${height}px`}>
+<ul class="run" style={`--h:${height}px`} data-gallery={project.data.title}>
   {frames.map((g, i) => (
-    <li data-reveal style={`--r:${g.src.width / g.src.height};--d:${i % 5}`}>
-      <button type="button" data-full={g.full} data-alt={g.alt} aria-label={`Открыть: ${g.alt}`}>
-        <Image src={g.src} alt={g.alt} height={height * 2} widths={[320, 640]} sizes={`${Math.round(height * g.src.width / g.src.height)}px`} loading="lazy" />
+    <li data-reveal style={`--r:${g.src.width / g.src.height};--nw:${g.src.width}px;--d:${i % 5}`}>
+      <button type="button" data-full={g.full} data-alt={g.alt} aria-label={`Открыть крупно: ${g.alt}`}>
+        <Image src={g.src} alt={g.alt} widths={g.widths} sizes={`(max-width: 700px) 100vw, min(${g.src.width}px, 70vw)`} quality={88} loading="lazy" decoding="async" />
       </button>
     </li>
   ))}
 </ul>
 <style>
   .run { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
-  .run li { flex: var(--r) 1 calc(var(--h) * var(--r)); aspect-ratio: var(--r); min-width: 0; }
+  /* Кадр растёт по ряду, но не шире родного размера: так скрин не мылится */
+  .run li { flex: var(--r) 1 calc(var(--h) * var(--r)); aspect-ratio: var(--r); min-width: 0; max-width: var(--nw); }
   .run::after { content: ''; flex-grow: 100000; }
-  .run button { display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; }
+  .run button { display: block; width: 100%; height: 100%; background: var(--surface); overflow: hidden; cursor: zoom-in; }
   .run :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
-  .run button:hover :global(img) { transform: scale(1.04); }
+  .run button:hover :global(img) { transform: scale(1.03); }
   @media (max-width: 700px) {
     .run li { flex-basis: calc(var(--h) * var(--r) * 0.62); }
   }

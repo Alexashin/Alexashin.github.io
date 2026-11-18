@@ -1,19 +1,57 @@
 ---
 import { profile } from '../data/profile';
+interface Props { current?: string; }
+const { current } = Astro.props;
+// На главной ссылки ведут к разделам, на внутренних страницах к разделам главной.
+const links = [
+  { id: 'work', label: 'Проекты' },
+  { id: 'services', label: 'Услуги' },
+  { id: 'process', label: 'Как работаю' },
+  { id: 'about', label: 'Обо мне' },
+  { id: 'contact', label: 'Контакты' },
+];
 ---
-<header class="bar wrap">
-  <a class="mark" href="/" aria-label="На главную">{profile.name}</a>
-  <nav aria-label="Основная">
-    <a href="/projects/">Проекты</a>
-    <a href="/#about">Обо мне</a>
+<header class="bar">
+  <div class="in wrap">
+    <a class="mark" href="/" aria-label="На главную">{profile.name}</a>
+    <nav aria-label="Разделы">
+      {links.map((l) => (
+        <a href={`/#${l.id}`} data-spy={l.id} aria-current={current === l.id ? 'true' : undefined}>{l.label}</a>
+      ))}
+    </nav>
     <a class="btn" href={profile.telegram.url}>Написать</a>
-  </nav>
+  </div>
 </header>
+
 <style>
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; background: var(--bg); position: relative; z-index: 3; }
-  .mark { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
-  nav { display: flex; align-items: center; gap: clamp(16px, 3vw, 36px); font-size: var(--step-small); }
-  nav a:not(.btn) { text-decoration: none; }
-  nav a:not(.btn):hover { text-decoration: underline; }
+  .bar { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+  .in { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); min-height: var(--bar); }
+  .mark { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; white-space: nowrap; }
+  nav { display: flex; gap: clamp(16px, 2.4vw, 32px); margin-left: auto; font-size: var(--step-small); }
+  nav a { color: var(--muted); text-decoration: none; padding-block: 6px; white-space: nowrap; transition: color 0.2s; }
+  nav a:hover { color: var(--ink); }
+  nav a[aria-current='true'] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 0.45em; }
   .btn { min-height: 40px; padding: 0 16px; }
+
+  @media (max-width: 900px) {
+    .in { flex-wrap: wrap; row-gap: 0; padding-top: 10px; }
+    .btn { margin-left: auto; }
+    nav { order: 3; width: 100%; gap: 18px; margin: 0 calc(var(--m) * -1); padding: 4px var(--m) 8px; overflow-x: auto; scrollbar-width: none; }
+    nav::-webkit-scrollbar { display: none; }
+  }
 </style>
+
+<script>
+  // Подсветка текущего раздела при прокрутке главной
+  const links = document.querySelectorAll<HTMLAnchorElement>('.bar nav a[data-spy]');
+  const sections = [...links].map((a) => document.getElementById(a.dataset.spy!)).filter(Boolean) as HTMLElement[];
+  if (sections.length && 'IntersectionObserver' in window) {
+    const set = (id: string | null) => links.forEach((a) => (a.dataset.spy === id ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) set(e.target.id);
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach((s) => io.observe(s));
+    // Над первым разделом подсветки нет
+    addEventListener('scroll', () => { if (scrollY < sections[0].offsetTop - innerHeight * 0.5) set(null); }, { passive: true });
+  }
+</script>

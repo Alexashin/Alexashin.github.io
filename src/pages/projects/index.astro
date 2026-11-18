@@ -9,7 +9,7 @@ const projects = (await getCollection('projects', (p) => !p.data.draft)).sort((a
 const total = projects.reduce((n, p) => n + p.data.gallery.length, 0);
 ---
 <Base title="Проекты" description="Все проекты одним листом: реальные экраны панелей, ботов, табло и плагина." path="/projects/">
-  <SiteBar />
+  <SiteBar current="work" />
   <main class="wrap">
     <h1>Все проекты</h1>
     <p class="lead muted">{projects.length} проектов, {total} кадров из рабочих систем. Нажмите на кадр, чтобы открыть его крупно.</p>

@@ -34,8 +34,8 @@ const services = defineCollection({
   schema: z.object({
     group: z.string(),
     order: z.number(),
-    sum: z.string(), // итог группы одним предложением (телефон)
-    items: z.array(z.object({ name: z.string(), note: z.string(), project: z.string().optional() })),
+    // Позиция прайс-листа: название, пояснение, стартовая цена, ссылка на проект-пример
+    items: z.array(z.object({ name: z.string(), note: z.string(), price: z.string(), project: z.string().optional() })),
   }),
 });
 

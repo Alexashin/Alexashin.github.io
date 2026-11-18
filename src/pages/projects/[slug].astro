@@ -15,7 +15,7 @@ const { Content } = await render(project);
 const d = project.data;
 ---
 <Base title={d.title} description={d.summary} path={`/projects/${project.id}/`}>
-  <SiteBar />
+  <SiteBar current="work" />
   <main>
     <header class="top wrap grid">
       <h1 data-reveal>{d.title}</h1>
@@ -86,7 +86,7 @@ const d = project.data;
   .v { font-size: var(--step-display); font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
   .l { color: var(--muted); max-width: 18ch; }
   .body { margin-top: clamp(56px, 8vw, 120px); align-items: start; }
-  .meta { grid-column: 1 / span 3; position: sticky; top: 24px; }
+  .meta { grid-column: 1 / span 3; position: sticky; top: calc(var(--bar) + 24px); }
   .meta dl { display: flex; flex-direction: column; gap: 18px; }
   .meta dd { margin-top: 2px; }
   .prose { grid-column: 5 / -1; }

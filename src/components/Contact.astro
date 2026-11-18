@@ -1,41 +1,53 @@
 ---
-import { Image } from 'astro:assets';
-import me from '../assets/me.jpg';
 import { profile } from '../data/profile';
+const rows = [
+  { label: 'Telegram', value: profile.telegram.handle, href: profile.telegram.url },
+  { label: 'Звонок и MAX', value: profile.phone.display, href: `tel:${profile.phone.tel}` },
+  { label: 'Почта', value: profile.email, href: `mailto:${profile.email}`, email: true },
+];
 ---
-<section id="contact" class="section wrap" aria-label="Контакты">
-  <div class="grid">
-    <p class="sentence" data-reveal>Расскажите задачу: скажу, возьмусь ли, за какую цену и в какой срок.</p>
-    <div class="portrait" data-reveal style="--d:1">
-      <Image src={me} alt={`Портрет: ${profile.name}`} width={340} height={340} widths={[170, 340]} sizes="170px" />
-    </div>
-    <div class="links" data-reveal style="--d:2">
-      <p class="q">Как связаться?</p>
-      <ul>
-        <li><a href={profile.telegram.url}>Telegram {profile.telegram.handle}</a></li>
-        <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
-        <li><a href={`tel:${profile.phone.tel}`}>{profile.phone.display}</a>, звонок и MAX</li>
-      </ul>
-    </div>
-    <p class="note small muted" data-reveal>{profile.city}, работаю удалённо по России. {profile.replyTime}</p>
-  </div>
+<section id="contact" class="contact" aria-labelledby="contact-h">
+  <a class="row hello" href={profile.telegram.url}>
+    <span class="in wrap">
+      <h2 id="contact-h" class="big">Напишите мне</h2>
+      <span class="go" aria-hidden="true">→</span>
+    </span>
+  </a>
+  {rows.map((r) => (
+    <a class="row" href={r.href} data-reveal>
+      <span class="in wrap">
+        <span class="lab">{r.label}</span>
+        <span class={`big${r.email ? ' email' : ''}`}>{r.value}</span>
+      </span>
+    </a>
+  ))}
 </section>
 
 <style>
-  .sentence { grid-column: 1 / span 5; font-size: clamp(1.625rem, 3vw, 2.25rem); line-height: 1.12; letter-spacing: -0.025em; font-weight: 500; }
-  .portrait { grid-column: 8 / span 2; align-self: start; }
-  .portrait :global(img) { width: 170px; height: 170px; object-fit: cover; filter: grayscale(1) contrast(1.1); background: var(--accent); mix-blend-mode: luminosity; }
-  .links { grid-column: 10 / span 3; align-self: start; }
-  .q { font-weight: 500; margin-bottom: 20px; }
-  .links ul { display: flex; flex-direction: column; gap: 10px; }
-  .links a { text-underline-offset: 0.25em; text-decoration-thickness: 1px; overflow-wrap: anywhere; }
-  .links a:hover { color: var(--accent); }
-  .note { grid-column: 1 / -1; margin-top: clamp(48px, 6vw, 88px); }
-  @media (max-width: 900px) {
-    .sentence { grid-column: 1 / -1; font-size: 1.5rem; }
-    .portrait { grid-column: 1 / span 3; margin-top: 36px; }
-    .portrait :global(img) { width: 96px; height: 96px; }
-    .links { grid-column: 4 / -1; margin-top: 36px; }
+  .contact { margin-top: var(--section); }
+  .row { display: block; text-decoration: none; background: var(--bg); transition: background 0.25s var(--ease); }
+  .row:nth-of-type(odd) { background: var(--surface); }
+  .in { display: grid; grid-template-columns: minmax(150px, 15%) minmax(0, 1fr); align-items: end; gap: 0 24px; min-height: clamp(96px, 10vw, 150px); padding-block: 20px 22px; }
+  .lab { font-weight: 600; padding-bottom: 0.5em; }
+  .big { font-size: var(--step-display); font-weight: 500; letter-spacing: -0.035em; line-height: 1; white-space: nowrap; }
+  .email { font-size: var(--step-title); }
+  a.row:hover { background: var(--surface-2); }
+  a.row:hover .big { color: var(--accent); }
+  a.row:focus-visible { outline-offset: -4px; }
+
+  .hello { background: var(--accent) !important; color: var(--accent-ink); }
+  .hello .in { grid-template-columns: minmax(0, 1fr) auto; }
+  .hello .big { font-weight: 600; }
+  .go { width: clamp(52px, 5.2vw, 84px); height: clamp(52px, 5.2vw, 84px); border-radius: 50%; background: var(--accent-ink); color: var(--accent); display: grid; place-items: center; font-size: clamp(1.5rem, 2.4vw, 2.5rem); line-height: 1; transition: transform 0.3s var(--ease); }
+  .hello:hover .go { transform: translateX(8px); }
+  .hello:hover { background: var(--ink) !important; }
+  .hello:hover .big { color: var(--bg); }
+
+  @media (max-width: 760px) {
+    .in { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-block: 18px; }
+    .lab { order: 2; padding: 8px 0 0; font-weight: 400; color: var(--muted); font-size: var(--step-small); }
+    .email { font-size: 6.4vw; }
+    .hello .in { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+    .go { width: 56px; height: 56px; }
   }
-  @media (min-width: 901px) and (max-width: 1100px) { .links { grid-column: 9 / -1; } .portrait { grid-column: 7 / span 2; } }
 </style>

@@ -1,27 +1,91 @@
-<dialog id="lb" aria-label="Просмотр кадра">
-  <button type="button" class="x" aria-label="Закрыть">Закрыть</button>
-  <img alt="" />
+<dialog id="lb" aria-label="Просмотр кадров">
+  <div class="top">
+    <p class="count small tnum" aria-live="polite"></p>
+    <button type="button" class="x" aria-label="Закрыть">Закрыть</button>
+  </div>
+  <div class="stage">
+    <button type="button" class="nav prev" aria-label="Предыдущий кадр">←</button>
+    <img alt="" />
+    <button type="button" class="nav next" aria-label="Следующий кадр">→</button>
+  </div>
   <p class="cap small"></p>
 </dialog>
 <style>
   dialog { border: 0; padding: 0; background: transparent; color: var(--ink); max-width: none; max-height: none; width: 100vw; height: 100dvh; }
   dialog:not([open]) { display: none; }
-  dialog[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: 12px; padding: 16px var(--m); background: color-mix(in srgb, var(--bg) 94%, transparent); animation: lbin 0.35s var(--ease) both; }
-  dialog img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; min-height: 0; }
-  .x { justify-self: end; background: var(--ink); color: var(--bg); min-height: 40px; padding: 0 16px; font-weight: 600; }
-  .x:hover { background: var(--accent); }
-  .cap { color: var(--muted); text-align: center; }
+  dialog[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; padding: 12px var(--m) 16px; background: color-mix(in srgb, var(--bg) 96%, transparent); animation: lbin 0.3s var(--ease) both; }
+  dialog::backdrop { background: transparent; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .count { color: var(--muted); }
+  .stage { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 0; }
+  .stage img { justify-self: center; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; min-height: 0; touch-action: pan-y; user-select: none; transition: opacity 0.2s; }
+  .stage img.loading { opacity: 0.35; }
+  .x, .nav { background: var(--surface-2); color: var(--ink); min-height: 44px; font-weight: 600; transition: background 0.2s, color 0.2s; }
+  .x { padding: 0 16px; }
+  .nav { width: 52px; height: 52px; font-size: 1.4rem; }
+  .x:hover, .nav:hover { background: var(--accent); color: var(--accent-ink); }
+  .nav[hidden] { visibility: hidden; display: block; }
+  .cap { color: var(--muted); text-align: center; max-width: 70ch; justify-self: center; }
+  @media (max-width: 700px) {
+    .stage { grid-template-columns: minmax(0, 1fr); }
+    .nav { position: fixed; bottom: 16px; z-index: 2; }
+    .prev { left: var(--m); } .next { right: var(--m); }
+    .cap { padding-inline: 64px; }
+  }
   @keyframes lbin { from { opacity: 0; } to { opacity: 1; } }
 </style>
 <script>
+  // Галерея: стрелки, клавиши ← →, свайп, счётчик, подгрузка соседних кадров.
+  // Листается в пределах одного проекта (data-gallery у списка кадров).
   const dlg = document.getElementById('lb') as HTMLDialogElement | null;
   if (dlg) {
     const img = dlg.querySelector('img')!;
     const cap = dlg.querySelector('.cap')!;
+    const count = dlg.querySelector('.count')!;
+    const prev = dlg.querySelector<HTMLButtonElement>('.prev')!;
+    const next = dlg.querySelector<HTMLButtonElement>('.next')!;
+    let list: HTMLButtonElement[] = [];
+    let idx = 0;
+    let title = '';
+
+    const preload = (b?: HTMLButtonElement) => { if (b?.dataset.full) new Image().src = b.dataset.full; };
+    const show = (i: number) => {
+      idx = (i + list.length) % list.length;
+      const b = list[idx];
+      img.classList.add('loading');
+      img.onload = () => img.classList.remove('loading');
+      img.src = b.dataset.full ?? '';
+      img.alt = b.dataset.alt ?? '';
+      cap.textContent = b.dataset.alt ?? '';
+      count.textContent = `${title ? title + ' · ' : ''}${idx + 1} из ${list.length}`;
+      prev.hidden = next.hidden = list.length < 2;
+      preload(list[(idx + 1) % list.length]);
+      preload(list[(idx - 1 + list.length) % list.length]);
+    };
+
     document.querySelectorAll<HTMLButtonElement>('button[data-full]').forEach((b) => b.addEventListener('click', () => {
-      img.src = b.dataset.full ?? ''; img.alt = b.dataset.alt ?? ''; cap.textContent = b.dataset.alt ?? '';
+      const group = b.closest<HTMLElement>('[data-gallery]');
+      list = group ? [...group.querySelectorAll<HTMLButtonElement>('button[data-full]')] : [b];
+      title = group?.dataset.gallery ?? '';
+      show(list.indexOf(b));
       dlg.showModal();
     }));
-    dlg.addEventListener('click', (e) => { if (e.target !== img) dlg.close(); });
+
+    prev.addEventListener('click', () => show(idx - 1));
+    next.addEventListener('click', () => show(idx + 1));
+    dlg.querySelector('.x')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target === dlg.querySelector('.stage')) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(idx + 1); }
+    });
+    // Свайп на телефоне
+    let x0: number | null = null;
+    img.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    img.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
+    });
   }
 </script>
